@@ -19,29 +19,44 @@ defmodule GeocoderTest do
   test "A list of results for an address in Belgium" do
     {:ok, coords} = Geocoder.call_list("Dikkelindestraat 46, 9032 Wondelgem, Belgium")
     assert is_list(coords)
-    assert Enum.count(coords) > 0
-    assert_belgium(coords |> List.first)
+    assert [head|_] = coords
+    assert_belgium(head)
   end
 
   test "A list of results for coordinates" do
     {:ok, coords} = Geocoder.call_list({51.0775264, 3.7073382})
     assert is_list(coords)
-    assert Enum.count(coords) > 0
+    assert [head|tail] = coords
+    assert is_list(tail)
+    assert_belgium(head)
   end
 
-  defp assert_new_york(coords) do
-    %Geocoder.Coords{bounds: _bounds, location: location, lat: _lat, lon: _lon} = coords
-    assert location.street_number == "1991"
-    assert location.street == "15th Street"
-    assert String.contains?(location.city, "Troy")
-    assert location.county == "Rensselaer County"
-    assert location.country_code |> String.upcase == "US"
-    assert location.postal_code == "12180"
+  test "Explicit Geocode.GoogleMaps data: latlng" do
+    {:ok, coords} = Geocoder.call(Geocoder.GoogleMaps.new({51.0775264, 3.7073382}))
+    assert_belgium(coords)
+  end
+
+  test "Explicit Geocode.GoogleMaps data: address" do
+    {:ok, coords} = Geocoder.call(Geocoder.GoogleMaps.new("Dikkelindestraat 46, 9032 Wondelgem, Belgium"))
+    assert_belgium(coords)
+  end
+
+  test "Explicit Geocode.GoogleMaps list: latlng" do
+    {:ok, coords} = Geocoder.call_list(Geocoder.GoogleMaps.new({51.0775264, 3.7073382}))
+    assert is_list(coords)
+    assert [head|tail] = coords
+    assert is_list(tail)
+    assert_belgium(head)
+  end
+
+  test "Explicit Geocode.GoogleMaps list: address" do
+    {:ok, coords} = Geocoder.call_list(Geocoder.GoogleMaps.new("Dikkelindestraat 46, 9032 Wondelgem, Belgium"))
+    assert is_list(coords)
+    assert [head|_] = coords
+    assert_belgium(head)
   end
 
   defp assert_belgium(coords) do
-    IO.inspect(coords |> Geocoder.Data.components)
-
     bounds = coords |> Geocoder.Data.bounds
 
     # Bounds are not always returned
@@ -69,4 +84,13 @@ defmodule GeocoderTest do
     assert lon |> Float.round(2) == 3.71
   end
 
+  defp assert_new_york(coords) do
+    location = coords |> Geocoder.Data.location
+    assert location.street_number == "1991"
+    assert location.street == "15th Street"
+    assert String.contains?(location.city, "Troy")
+    assert location.county == "Rensselaer County"
+    assert location.country_code |> String.upcase == "US"
+    assert location.postal_code == "12180"
+  end
 end
