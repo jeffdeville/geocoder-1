@@ -138,7 +138,8 @@ defmodule Geocoder.GoogleMaps do
       %Geocoder.Location{
         city: comps[:locality],
         state: comps[:county],
-        country: comps[:country] || comps[:administrative_area_level_2] || comps[:administrative_area_level_1],
+        country: comps[:country] || comps[:administrative_area_level_1],
+        county: comps[:administrative_area_level_2],
         postal_code: comps[:postal_code],
         street: comps[:route],
         street_number: comps[:street_number],
