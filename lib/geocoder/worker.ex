@@ -98,7 +98,7 @@ defmodule Geocoder.Worker do
     :poolboy.transaction(Geocoder.pool_name, function, opts[:timeout])
   end
 
-  defp run(function, conf, q, false) do
+  defp run(_, conf, q, false) do
     {q, params} = {q[:address] || q[:latlng] || q, Geocoder.QueryParams.new(q)}
     Geocoder.Providers.Provider.go!(q, params, conf[:provider])
       |> tap(&conf[:store].update/1)

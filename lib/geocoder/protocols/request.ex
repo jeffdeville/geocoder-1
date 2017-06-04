@@ -9,12 +9,6 @@ defprotocol Geocoder.Request do
   def region(data)
 
   @doc """
-    One or more location types
-
-    @tags [reverse]
-  """
-
-  @doc """
     Specifying a type will restrict the results to this type.
 
     If multiple types are specified, the API will return all addresses
@@ -54,11 +48,6 @@ defprotocol Geocoder.Request do
 
   ##############################################################################
 
-  @doc """
-    The language in which to return results.
-
-    @tags [direct, reverse]
-  """
   @doc """
     See the [list of supported languages](https://developers.google.com/maps/faq#languagesupport).
     Google often updates the supported languages, so this list may not be exhaustive.

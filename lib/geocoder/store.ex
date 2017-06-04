@@ -12,7 +12,7 @@ defmodule Geocoder.Store do
   end
 
   def update(data) do
-    GenServer.call(name, {:update, data})
+    GenServer.call(name(), {:update, data})
   end
 
   def link(from, to) do
@@ -45,7 +45,7 @@ defmodule Geocoder.Store do
   end
 
   # Update store
-  def handle_call({:update, data}, from, {links, store, opts}) when is_list(data) do
+  def handle_call({:update, data}, _from, {links, store, opts}) when is_list(data) do
     {l, s} = data |> Enum.reduce({links, store}, &update_single(&2, &1, opts[:precision]))
     {:reply, data, {l, s, opts}}
   end
