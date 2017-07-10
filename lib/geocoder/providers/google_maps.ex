@@ -41,7 +41,8 @@ defmodule Geocoder.Providers.GoogleMaps do
     coords = geocode_coords(response)
     bounds = geocode_bounds(response)
     location = geocode_location(response)
-    %{coords | bounds: bounds, location: location}
+    precision = geocode_precision(response)
+    %{coords | bounds: bounds, location: location, precision: precision}
   end
 
   defp parse_reverse_geocode(response) do
@@ -49,6 +50,8 @@ defmodule Geocoder.Providers.GoogleMaps do
     location = geocode_location(response)
     %{coords | location: location}
   end
+
+  defp geocode_precision(%{"geometry" => %{"location_type" => precision}}), do: precision
 
   defp geocode_coords(%{"geometry" => %{"location" => coords}}) do
     %{"lat" => lat, "lng" => lon} = coords
